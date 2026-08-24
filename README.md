@@ -44,3 +44,7 @@ sudo systemctl enable --now rpi-exporter
 - [Architecture](docs/architecture.md)
 - [Known limitations](docs/known-limitations.md)
 - [Extending the stack](docs/extending.md)
+
+## License
+
+[MIT](LICENSE)
