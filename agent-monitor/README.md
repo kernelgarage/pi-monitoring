@@ -31,9 +31,10 @@ real tokenizer for the model that's actually loaded, not an estimate from an unr
 ## Running it
 
 Already wired into the top-level `docker-compose.yml` (service `agent-monitor`, scraped by
-Prometheus as job `agent-monitor`). It reaches Ollama on the host via
-`host.docker.internal:11434` — set by `OLLAMA_URL` and the `extra_hosts: host-gateway` entry,
-which works the same way on Docker Desktop (Mac/Windows) and on Linux (Pi) with modern Docker.
+Prometheus as job `agent-monitor`, image built via [`uv`](https://docs.astral.sh/uv/)). It
+reaches Ollama on the host via `host.docker.internal:11434` — set by `OLLAMA_URL` and the
+`extra_hosts: host-gateway` entry, which works the same way on Docker Desktop (Mac/Windows) and
+on Linux (Pi) with modern Docker.
 
 ```bash
 curl -X POST localhost:8090/generate -d '{"model":"qwen2.5:0.5b","prompt":"hello"}'
@@ -44,14 +45,25 @@ Fire a handful of concurrent requests against a single-slot instance and `llm_re
 will visibly climb while `llm_requests_inflight` stays pinned at 1 — that's the "loaded vs.
 waiting" state this whole thing exists to show.
 
+### Local development
+
+```bash
+uv sync                    # installs deps + dev tools into .venv
+uv run ruff format .       # format
+uv run ruff check .        # lint
+uv run uvicorn app:app --reload --port 8090
+```
+
 ## `token_counter.py`
 
 Standalone script, independent of the running queue — count tokens for a file (or stdin)
-against a model's real tokenizer without generating anything:
+against a model's real tokenizer without generating anything. Built with
+[Typer](https://typer.tiangolo.com/):
 
 ```bash
-python token_counter.py some_prompt.txt --model qwen2.5:0.5b
-echo "hi" | python token_counter.py
+uv run token_counter.py some_prompt.txt --model qwen2.5:0.5b
+echo "hi" | uv run token_counter.py
+uv run token_counter.py --help
 ```
 
 Works by calling `/api/generate` with `options.num_predict=0`, which stops the model right after
