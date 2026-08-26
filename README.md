@@ -1,6 +1,6 @@
 # pi-monitoring
 
-A Docker Compose observability stack for a Raspberry Pi: metrics (Prometheus), logs (Loki), and traces (Tempo), unified in Grafana — plus a host-side script that exports Pi hardware metrics (CPU temp, throttling, clock speed, voltage, fan RPM).
+A Docker Compose observability stack for a Raspberry Pi: metrics (Prometheus), logs (Loki), and traces (Tempo), unified in Grafana — plus a host-side script that exports Pi hardware metrics (CPU temp, throttling, clock speed, voltage, fan RPM), and [`agent-monitor`](agent-monitor/) for watching a local LLM (queue depth, tokens) instead of just the hardware underneath it.
 
 ## Prerequisites
 
@@ -38,6 +38,12 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable --now rpi-exporter
 ```
+
+### Agent-level monitoring
+
+[`agent-monitor/`](agent-monitor/) is a small queue that sits in front of a local LLM (built
+against Ollama) — it's already wired into this compose file and scraped by Prometheus. See its
+own README for what it tracks and why.
 
 ## Docs
 

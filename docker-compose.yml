@@ -73,6 +73,19 @@ services:
     depends_on:
       - loki
 
+  agent-monitor:
+    build: ./agent-monitor
+    container_name: agent_monitor
+    restart: always
+    networks: [monitoring]
+    environment:
+      - OLLAMA_URL=http://host.docker.internal:11434
+      - AGENT_MONITOR_SLOTS=1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:8090:8090"
+
   tempo:
     # pinned: :latest currently resolves to an unreleased v3.0 rewrite with an incompatible config schema
     image: grafana/tempo:2.8.1

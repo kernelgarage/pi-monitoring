@@ -1,1 +1,4 @@
 data/
+agent-monitor/.venv/
+agent-monitor/__pycache__/
+.DS_Store
